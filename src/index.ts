@@ -17,7 +17,7 @@ import { Application, Context } from 'probot' // eslint-disable-line no-unused-v
 
 module.exports = (app: Application) => {
   app.log("APP STARTED AND IS LOOKING AT THIS");
-  app.on('pull_request.opened', async (context: Context) => {
+  app.on('pull_request', async (context: Context) => {
     // `context` extracts information from the event, which can be passed to
     // GitHub API calls. This will return:
     //   { owner: 'yourname', repo: 'yourrepo', number: 123, body: 'Hello World !}
@@ -26,11 +26,12 @@ module.exports = (app: Application) => {
     const params = {
       sha: pr.head.sha,
       context: 'masacaca',
-      state: "failure",
+      state: '"failure"',
       description: "You're straight up cringe bro"
     }
     context.log("Yo I got hit");
     // Post a comment on the issue
-    return context.github.repos.createStatus(context.repo(params));
+    const res = await context.github.repos.createStatus(context.repo({sha: pr.head.sha, context: 'masacaca', state: 'failure', description: 'straight up cringe bro'}));
+    //const res = await context.github.checks.create();
   })
 }
